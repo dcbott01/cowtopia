@@ -203,7 +203,7 @@ def print_welcome_message(start_time):
     print(Fore.CYAN + Style.BRIGHT + "Jajanin dong orang baik :)")
     print(Fore.YELLOW + Style.BRIGHT + "0x5bc0d1f74f371bee6dc18d52ff912b79703dbb54")
     print(Fore.CYAN + Style.BRIGHT + "Contact Me : t.me/dcbott02")
-    print(Fore.RED + Style.BRIGHT + "Update Link: https://github.com/dcbott01/")
+    print(Fore.RED + Style.BRIGHT + "Update Link: https://github.com/dcbott01/cowtopia")
     print(Fore.BLUE + Style.BRIGHT + "Tukang Rename MATI AJA")
 
 def main():
