@@ -166,7 +166,7 @@ def buy_factory(access_token):
     }
     try:
         data = {}
-        response = requests.post(url, headers=headers, data=data)
+        response = requests.post(url, headers=mission_headers, data=data)
         response.raise_for_status() 
         return response.json()
     except requests.RequestException as e:
@@ -183,7 +183,7 @@ def buy_factory_house(access_token):
     }
     try:
         data = {}
-        response = requests.post(url, headers=headers, data=data)
+        response = requests.post(url, headers=mission_headers, data=data)
         response.raise_for_status() 
         return response.json()
     except requests.RequestException as e:
