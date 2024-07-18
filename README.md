@@ -34,4 +34,5 @@ Register : https://t.me/cowtopiabot/app?startapp=1655874127
 - Auto Clear Mission
 - Auto Buy Animal
 - Auto Claim Offline Profit
+- Auto Claim Daily
 - Multi Account
