@@ -155,6 +155,43 @@ def claim_profit(access_token):
         print(f"Request Error: {e} - Status Code: {response.status_code} - Response Text: {response.text}")
         return None
 
+def achievement(access_token):
+    url = 'https://cowtopia-be.tonfarmer.com/mission/achievement?'
+    mission_headers = {
+        "Accept": "application/json, text/plain, */*",
+        "Authorization": f"Bearer {access_token}",
+        "Origin": "https://cowtopia-prod.tonfarmer.com",
+        "Referer": "https://cowtopia-prod.tonfarmer.com/",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36",
+    }
+    try:
+        response = requests.get(url, headers=mission_headers)
+        response.raise_for_status() 
+        return response.json()
+    except requests.RequestException as e:
+        print(f"Request Error: {e} - Status Code: {response.status_code} - Response Text: {response.text}")
+        return None
+
+def daily_claim(access_token, log_id):
+    url = 'https://cowtopia-be.tonfarmer.com/mission/achievement/claim'
+    mission_headers = {
+        "Accept": "application/json, text/plain, */*",
+        "Authorization": f"Bearer {access_token}",
+        "Origin": "https://cowtopia-prod.tonfarmer.com",
+        "Referer": "https://cowtopia-prod.tonfarmer.com/",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36",
+    }
+    try:
+        data_daily = {
+            "log_id": log_id
+        }
+        response = requests.post(url, headers=mission_headers, data=data_daily)
+        response.raise_for_status() 
+        return response.json()
+    except requests.RequestException as e:
+        print(f"Request Error: {e} - Status Code: {response.status_code} - Response Text: {response.text}")
+        return None
+
 def buy_factory(access_token):
     url = 'https://cowtopia-be.tonfarmer.com/factory/buy'
     mission_headers = {
@@ -165,8 +202,8 @@ def buy_factory(access_token):
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36",
     }
     try:
-        data = {}
-        response = requests.post(url, headers=mission_headers, data=data)
+        data_buy = {}
+        response = requests.post(url, headers=mission_headers, data=data_buy)
         response.raise_for_status() 
         return response.json()
     except requests.RequestException as e:
@@ -182,8 +219,8 @@ def buy_factory_house(access_token):
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36",
     }
     try:
-        data = {}
-        response = requests.post(url, headers=mission_headers, data=data)
+        data_buy_house = {}
+        response = requests.post(url, headers=mission_headers, data=data_buy_house)
         response.raise_for_status() 
         return response.json()
     except requests.RequestException as e:
@@ -203,7 +240,7 @@ def print_welcome_message(start_time):
     print(Fore.CYAN + Style.BRIGHT + "Jajanin dong orang baik :)")
     print(Fore.YELLOW + Style.BRIGHT + "0x5bc0d1f74f371bee6dc18d52ff912b79703dbb54")
     print(Fore.CYAN + Style.BRIGHT + "Contact Me : t.me/dcbott02")
-    print(Fore.RED + Style.BRIGHT + "Update Link: https://github.com/dcbott01/cowtopia")
+    print(Fore.RED + Style.BRIGHT + "Update Link: https://github.com/dcbott01/")
     print(Fore.BLUE + Style.BRIGHT + "Tukang Rename MATI AJA")
 
 def main():
@@ -234,7 +271,22 @@ def main():
                     buy_factory_response = buy_factory(token)
                     buy_house_response = buy_factory_house(token)
                     profit_response = claim_profit(token)
+                    achievement_response = achievement(token)
 
+                    log_id = None
+                    if achievement_response and 'data' in achievement_response and 'check_in' in achievement_response['data']:
+                        check_in_data = achievement_response['data']['check_in']['data']
+                        last_completed = next((day for day in reversed(check_in_data) if day['state'] == 'completed'), None)
+                        if last_completed and 'log_id' in last_completed:
+                            log_id = last_completed['log_id']
+
+                    if log_id:
+                        daily_claim_response = daily_claim(token, log_id)
+                        if daily_claim_response:
+                            print(f"{Fore.GREEN+Style.BRIGHT}Daily Claim Success {Style.RESET_ALL}           ", flush=True)
+                    else:
+                        print(f"{Fore.RED+Style.BRIGHT}Daily sudah di claim. Skipping...{Style.RESET_ALL}", flush=True)
+                    
                     if profit_response:
                         profit = profit_response.get('data',{}).get('profit',0)
                         print(f"{Fore.GREEN+Style.BRIGHT}[ Profit ]: {profit} {Style.RESET_ALL}           ", flush=True)
@@ -262,6 +314,10 @@ def main():
                                     else:
                                         print(f"{Fore.RED + Style.BRIGHT}Gagal membeli Animal.")
                                     break  
+
+                    if buy_factory_response:
+                        buy_success = buy_factory_response.get('success','')
+                        print(f"{Fore.YELLOW + Style.BRIGHT} Mencoba membeli Factory... {buy_success}", flush=True)
 
                     if not skip_list_mission and mission_response and 'data' in mission_response and 'missions' in mission_response['data']:
                         for mission in mission_response['data']['missions']:
@@ -292,3 +348,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
